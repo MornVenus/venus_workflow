@@ -1,0 +1,24 @@
+﻿<Window x:Class="WorkflowCore.Sample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WorkflowCore.Sample"
+        xmlns:views="clr-namespace:Venus.Workflow.GUI.Views;assembly=Venus.Workflow.GUI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <Button x:Name="StartBtn" Content="Start" Click="StartBtn_Click" />
+            <Button x:Name="CancelBtn" Content="Cancel" Click="CancelBtn_Click" />
+        </StackPanel>
+
+        <Grid Grid.Column="1">
+            <views:WorkflowView x:Name="WorkflowView" />
+        </Grid>
+    </Grid>
+</Window>

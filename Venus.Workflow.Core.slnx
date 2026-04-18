@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Venus.Workflow.Core/Venus.Workflow.Core.csproj" />
+  <Project Path="Venus.Workflow.GUI/Venus.Workflow.GUI.csproj" />
+  <Project Path="WorkflowCore.Sample/WorkflowCore.Sample.csproj" />
+</Solution>
