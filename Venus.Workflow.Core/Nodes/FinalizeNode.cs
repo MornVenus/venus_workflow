@@ -1,4 +1,6 @@
-﻿namespace Venus.Workflow.Core.Nodes;
+﻿using Venus.Workflow.Core.Models.Pipelines;
+
+namespace Venus.Workflow.Core.Nodes;
 
 public class FinalizeNode: GroupNode
 {
@@ -6,7 +8,9 @@ public class FinalizeNode: GroupNode
     {
         foreach (var node in Nodes)
         {
-            await node.ExecuteAsync(context);
+            context.CurrentNode = node;
+            var pipeline = GlobalMiddlewareRegistry.CreateDefaultPipeline();
+            await pipeline.ExecuteAsync(() => node.ExecuteAsync(context), context);
             if (node.Exception is OperationCanceledException)
             {
                 throw node.Exception;

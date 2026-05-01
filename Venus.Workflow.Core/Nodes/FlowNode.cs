@@ -128,6 +128,19 @@ public abstract class FlowNode: ViewModelBase
 
     #endregion	MVVMProperty Message
 
+    #region MVVMProperty Exception
+
+    private Exception? _exception;
+
+    public Exception? Exception
+    {
+        get => _exception;
+        internal set => Set(ref _exception, value);
+    }
+
+    #endregion	MVVMProperty Exception
+
+
     /// <summary>
     /// 执行前延时（毫秒）
     /// </summary>
@@ -137,8 +150,6 @@ public abstract class FlowNode: ViewModelBase
     /// 执行后延时（毫秒）
     /// </summary>
     public int DelayAfter { get; set; }
-
-    public Exception? Exception { get; private set; }
 
     #endregion Properties
 

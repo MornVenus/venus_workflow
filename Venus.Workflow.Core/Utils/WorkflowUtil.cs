@@ -1,4 +1,5 @@
-﻿using Venus.Workflow.Core.Nodes;
+﻿using Venus.Workflow.Core.Models.Pipelines;
+using Venus.Workflow.Core.Nodes;
 
 namespace Venus.Workflow.Core.Utils;
 
@@ -14,7 +15,9 @@ public class WorkflowUtil
     {
         foreach (var node in nodes)
         {
-            await node.ExecuteAsync(context);
+            context.CurrentNode = node;
+            var pipeline = GlobalMiddlewareRegistry.CreateDefaultPipeline();
+            await pipeline.ExecuteAsync(()=> node.ExecuteAsync(context), context);
             if (node.Exception != null)
             {
                 throw node.Exception;

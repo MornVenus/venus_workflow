@@ -1,4 +1,6 @@
-﻿using Venus.Workflow.Core.Models;
+﻿using System.Xml.Linq;
+using Venus.Workflow.Core.Models;
+using Venus.Workflow.Core.Models.Pipelines;
 using Venus.Workflow.Core.Nodes;
 using Venus.Workflow.Core.Utils;
 
@@ -56,30 +58,42 @@ public class FlowEngine: ViewModelBase
         _cts = new CancellationTokenSource();
         Context.CancellationToken = _cts.Token;
 
-        try
+        // 执行Nodes
+        foreach (var node in Nodes)
         {
-            await WorkflowUtil.ExecuteNodesAsync(Context, Nodes);
-        }
-        catch (OperationCanceledException ex)
-        {
-            State = FlowState.Cancel;
-            Exception = ex;
-        }
-        catch (Exception ex)
-        {
-            State = FlowState.Error;
-            Exception = ex;
-        }
-        finally
-        {
-            if (FinalizeNode.Nodes.Count > 0)
+            Context.CurrentNode = node;
+            var pipeline = GlobalMiddlewareRegistry.CreateDefaultPipeline();
+            await pipeline.ExecuteAsync(() => node.ExecuteAsync(Context), Context);
+            if (node.Exception != null)
             {
-                // 为 Finalize 节点创建一个新的 CancellationToken
-                // 这样即使主流程被取消，Finalize 节点也能正常执行
-                using var finalizeCts = new CancellationTokenSource();
-                Context.CancellationToken = finalizeCts.Token;
-                await FinalizeNode.ExecuteAsync(Context);
+                State = FlowState.Error;
+                Exception = node.Exception;
+                break;
             }
+        }
+
+        if (Exception != null)
+        {
+            if (Exception is OperationCanceledException)
+            {
+                State = FlowState.Cancel;
+            }
+            else
+            {
+                State = FlowState.Error;
+            }
+        }
+
+        // 执行FinalizeNode
+        if (FinalizeNode.Nodes.Count > 0)
+        {
+            // 为 Finalize 节点创建一个新的 CancellationToken
+            // 这样即使主流程被取消，Finalize 节点也能正常执行
+            using var finalizeCts = new CancellationTokenSource();
+            Context.CancellationToken = finalizeCts.Token;
+            Context.CurrentNode = FinalizeNode;
+            var pipeline = GlobalMiddlewareRegistry.CreateDefaultPipeline();
+            await pipeline.ExecuteAsync(() => FinalizeNode.ExecuteAsync(Context), Context);
         }
     }
 

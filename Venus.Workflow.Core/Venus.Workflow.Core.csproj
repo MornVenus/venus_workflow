@@ -4,6 +4,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+  
+	<!-- NuGet 元数据 -->
+    <PackageId>Venus.Workflow.Core</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Venus</Authors>
+    <Company>Venus</Company>
+    <Description>Workflow Libarary</Description>
+
+    <!-- 可选 -->
+    <PackageTags>workflow</PackageTags>
+    <RepositoryUrl>https://github.com/MornVenus/venus_workflow</RepositoryUrl>
   </PropertyGroup>
 
 	<ItemGroup>

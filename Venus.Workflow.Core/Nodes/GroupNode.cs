@@ -1,4 +1,4 @@
-﻿using Venus.Workflow.Core.Utils;
+﻿using Venus.Workflow.Core.Models.Pipelines;
 
 namespace Venus.Workflow.Core.Nodes;
 
@@ -8,6 +8,16 @@ public class GroupNode: FlowNode
 
     protected override async Task InnerExecuteAsync(FlowContext context)
     {
-        await WorkflowUtil.ExecuteNodesAsync(context, Nodes);
+        foreach (var node in Nodes)
+        {
+            context.CurrentNode = node;
+            var pipeline = GlobalMiddlewareRegistry.CreateDefaultPipeline();
+            await pipeline.ExecuteAsync(() => node.ExecuteAsync(context), context);
+            if (node.Exception != null)
+            {
+                Exception = node.Exception;
+                break;
+            }
+        }
     }
 }
