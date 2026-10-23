@@ -191,7 +191,7 @@ public abstract class FlowNode: ViewModelBase
         }
         catch (Exception ex)
         {
-            OnException(context, ex);
+            await OnExceptionAsync(context, ex);
         }
         finally
         {
@@ -211,7 +211,7 @@ public abstract class FlowNode: ViewModelBase
         return $"{Name}:{Description}";
     }
 
-    protected virtual void OnException(FlowContext context, Exception ex)
+    protected virtual Task OnExceptionAsync(FlowContext context, Exception ex)
     {
         Exception = ex;
         if (ex is OperationCanceledException)
@@ -222,6 +222,7 @@ public abstract class FlowNode: ViewModelBase
         {
             State = FlowState.Error;
         }
+        return Task.CompletedTask;
     }
 
     #endregion Methods
