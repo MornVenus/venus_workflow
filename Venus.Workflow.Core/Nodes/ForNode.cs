@@ -93,13 +93,13 @@ public class ForNode : GroupNode
         {
             State = FlowState.Cancel;
             context.Logger?.LogWarning("For循环执行被取消: {Name}", Name);
-            throw;
+            //throw;
         }
         catch (Exception ex)
         {
             State = FlowState.Error;
             context.Logger?.LogError(ex, "For循环执行出错: {Name}", Name);
-            throw;
+            //throw;
         }
     }
 }

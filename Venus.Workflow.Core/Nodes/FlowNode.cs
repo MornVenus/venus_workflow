@@ -189,15 +189,9 @@ public abstract class FlowNode: ViewModelBase
                 State = FlowState.Complete;
             }
         }
-        catch (OperationCanceledException ex)
-        {
-            Exception = ex;
-            State = FlowState.Cancel;
-        }
         catch (Exception ex)
         {
-            State = FlowState.Error;
-            Exception = ex;
+            OnException(context, ex);
         }
         finally
         {
@@ -215,6 +209,19 @@ public abstract class FlowNode: ViewModelBase
     public override string ToString()
     {
         return $"{Name}:{Description}";
+    }
+
+    protected virtual void OnException(FlowContext context, Exception ex)
+    {
+        Exception = ex;
+        if (ex is OperationCanceledException)
+        {
+            State = FlowState.Cancel;
+        }
+        else
+        {
+            State = FlowState.Error;
+        }
     }
 
     #endregion Methods
